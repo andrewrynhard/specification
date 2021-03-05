@@ -1,2 +1,1 @@
-# specification
-Common Operating System Interface Specification
+# Common Operating System Interface Specification

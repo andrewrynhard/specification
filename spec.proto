@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package spec.v1alpha1;
+
+service Engine {
+  rpc Register(Plugin) returns (RegisterResponse);
+}
+
+message Plugin{
+  string name = 1;
+  repeated Resource resources = 2;
+}
+
+message RegisterResponse {}
+
+service Runtime {
+  rpc Apply(Resource) returns (ApplyResponse);
+  rpc Delete(Resource) returns (DeleteResponse);
+  rpc Get(Resource) returns (GetResponse);
+  rpc Watch(Resource) returns (stream WatchResponse);
+}
+
+message Metadata {
+  string api = 1;
+  string version = 2;
+  string kind = 3;
+  string namespace = 4;
+}
+
+message Resource {
+  Metadata metadata = 1;
+  oneof payload {
+    ResourceDefinition definition = 5;
+    ResourceInstance instance = 6;
+  }
+}
+
+message ResourceDefinition {
+  repeated string dependencies = 1;
+}
+
+message ResourceInstance {
+  string id = 5;
+  optional bytes spec = 6;
+}
+
+message ApplyResponse {}
+
+message DeleteResponse {}
+
+message GetResponse {}
+
+message WatchResponse {
+  Resource resource = 1;
+}
+
+// KernelParameter describes the configuration options for a kernel parameter.
+//
+// https://man7.org/linux/man-pages/man2/sysctl.2.html.
+// https://man7.org/linux/man-pages/man8/sysctl.8.html.
+message KernelParameter {
+  string key = 1;
+  string value = 2;
+}
+
+// Mount describes the configuration options for mounts.
+//
+// https://man7.org/linux/man-pages/man2/mount.2.html.
+// https://man7.org/linux/man-pages/man8/mount.8.html.
+message Mount {
+  string source = 1;
+  string target = 2;
+  string type = 3;
+  repeated string options = 4;
+}
+
+// Resolver describes configuration options for the resolver.
+//
+// https://man7.org/linux/man-pages/man5/resolv.conf.5.html.
+message Resolver{
+  repeated string nameserver = 1;
+  string search = 2;
+  repeated string sortlist = 3;
+  repeated ResolverOptions options = 4;
+}
+
+message ResolverOptions{
+  bool debug = 1;
+  uint32 ndots = 2;
+  uint32 timeout = 3;
+  uint32 attempts = 4;
+  bool rotate = 5;
+  bool no_check_names = 6;
+  bool inet6 = 7;
+  bool ip6_bytestring = 8;
+  bool ip6_dotint = 9;
+  bool edns0 = 10;
+  bool single_request = 11;
+  bool single_request_reopen = 12;
+  bool no_tld_query = 13;
+  bool use_vc = 14;
+  bool no_reload = 15;
+  bool trust_ad = 16;
+}
